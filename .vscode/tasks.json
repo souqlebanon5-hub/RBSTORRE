@@ -1,0 +1,531 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install and run Souq Lebanon",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm install --no-audit --no-fund && npm run dev"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Install Souq Lebanon dependencies",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"rmdir /s /q node_modules & set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm install --no-audit --no-fund"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check blocked install scripts",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm install-scripts ls"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Approve Vite install script",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm install-scripts approve esbuild"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Run Souq Lebanon",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run dev"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Find displayed product record",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && node --input-type=module -e \"import { initializeApp } from 'firebase/app'; import { getFirestore, collection, getDocs } from 'firebase/firestore'; import config from './firebase-applet-config.json' with { type: 'json' }; const app = initializeApp(config); const db = getFirestore(app, config.firestoreDatabaseId); const snap = await getDocs(collection(db, 'products')); console.log(JSON.stringify(snap.docs.map(d => ({ id: d.id, title: d.data().title, vendor_id: d.data().vendor_id }))));\""
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Query Firestore product IDs",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"--input-type=module",
+				"-e",
+				"import { initializeApp } from 'firebase/app'; import { getFirestore, collection, getDocs } from 'firebase/firestore'; import config from './firebase-applet-config.json' with { type: 'json' }; const app = initializeApp(config); const db = getFirestore(app, config.firestoreDatabaseId); const snap = await getDocs(collection(db, 'products')); console.log(JSON.stringify(snap.docs.map(d => ({ id: d.id, title: d.data().title, vendor_id: d.data().vendor_id }))));"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Query products with safe quoting",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"--input-type=module",
+				"-e",
+				"import { initializeApp } from \"firebase/app\"; import { getFirestore, collection, getDocs } from \"firebase/firestore\"; import config from \"./firebase-applet-config.json\" with { type: \"json\" }; const app = initializeApp(config); const db = getFirestore(app, config.firestoreDatabaseId); const snap = await getDocs(collection(db, \"products\")); console.log(JSON.stringify(snap.docs.map(d => ({ id: d.id, title: d.data().title, vendor_id: d.data().vendor_id }))));"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Read product document IDs",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"inspect-products.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Delete requested product",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"inspect-products.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check vendor status",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"inspect-vendor-status.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check alistore vendor status",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"inspect-email-vendor.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Activate Alistore account",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"activate-vendor.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Verify Alistore activation",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"activate-vendor.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check saved admin dashboard data",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"inspect-admin-data.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build Souq Lebanon for deployment",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Final production build",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Build final Souq Lebanon release",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Migrate active public vendors",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"migrate-public-vendors.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check Firebase CLI availability",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"where firebase"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Run Firebase CLI temporarily",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest --version"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Verify Firebase CLI",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest --version"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Validate Firestore rules emulator",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest emulators:exec --only firestore --project demo-souqhub \"echo Firestore rules loaded\""
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Run Firestore rule emulator check",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest emulators:exec --only firestore --project demo-souqhub validate-rules.cmd"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check Firebase deploy login",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest login:list --json"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check Firebase project permissions",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest projects:list"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Production build security changes",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "TypeScript check security changes",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run lint"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "TypeScript check after settings fix",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run lint"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Final Firebase-secured build",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Final Firebase-secured TypeScript check",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run lint"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Validate vendor product deletion",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run lint && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Test unauthenticated Firestore reads",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"check-public-access.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Final role testing build",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run lint && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check Firebase deployment sign-in",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest login:list --json"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Check admin Firebase account",
+			"type": "shell",
+			"command": "C:\\Program Files\\nodejs\\node.exe",
+			"args": [
+				"check-admin-account.mjs"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Verify Firebase project login",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest projects:list"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Start standard Firebase login",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest login"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "List accessible Firebase projects",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest projects:list"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Deploy Firebase security rules",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest deploy --only firestore:rules,storage --project eastern-coil-n5p7n --non-interactive"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Deploy Firestore rules only",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npx --yes firebase-tools@latest deploy --only firestore:rules --project eastern-coil-n5p7n --non-interactive"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Verify AI Studio cleanup final",
+			"type": "shell",
+			"command": "cmd.exe",
+			"args": [
+				"/d",
+				"/c",
+				"set \"PATH=C:\\Program Files\\nodejs;%PATH%\" && npm run lint && npm run build"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

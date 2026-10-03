@@ -1,0 +1,196 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSuperAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/profiles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'super_admin';
+    }
+
+    function ownsStore(storeId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/vendors/$(storeId))
+        && get(/databases/$(database)/documents/vendors/$(storeId)).data.profile_id == request.auth.uid;
+    }
+
+    function validGuestOrder(orderId) {
+      let data = request.resource.data;
+      return data.keys().hasAll([
+          'id', 'order_number', 'customer_name', 'customer_phone', 'city',
+          'address_details', 'delivery_notes', 'subtotal', 'delivery_fee',
+          'total_cod_amount', 'currency', 'status', 'created_at', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'order_number', 'customer_name', 'customer_phone', 'city',
+          'address_details', 'delivery_notes', 'subtotal', 'delivery_fee',
+          'total_cod_amount', 'currency', 'status', 'created_at', 'updated_at',
+          'payment_method', 'whish_sender_phone'
+        ])
+        && data.id == orderId
+        && data.order_number is string
+        && data.customer_name is string
+        && data.customer_name.size() > 0
+        && data.customer_name.size() <= 120
+        && data.customer_phone is string
+        && data.customer_phone.size() > 0
+        && data.customer_phone.size() <= 32
+        && data.city is string
+        && data.city.size() > 0
+        && data.city.size() <= 120
+        && data.address_details is string
+        && data.address_details.size() > 0
+        && data.address_details.size() <= 500
+        && data.subtotal is number
+        && data.subtotal >= 0
+        && data.delivery_fee is number
+        && data.delivery_fee >= 0
+        && data.total_cod_amount is number
+        && data.total_cod_amount == data.subtotal + data.delivery_fee
+        && data.currency == 'USD'
+        && data.status == 'processing'
+        && data.created_at is string
+        && data.updated_at is string;
+    }
+
+    function validGuestOrderItem(itemId) {
+      let data = request.resource.data;
+      let productPath = /databases/$(database)/documents/products/$(data.product_id);
+      let publicVendorPath = /databases/$(database)/documents/public_vendors/$(data.vendor_id);
+      return data.keys().hasAll([
+          'id', 'order_id', 'vendor_id', 'product_id', 'variant_id', 'quantity',
+          'unit_price', 'commission_amount', 'vendor_payout', 'item_status',
+          'pickup_code', 'created_at', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'order_id', 'vendor_id', 'product_id', 'variant_id', 'quantity',
+          'unit_price', 'commission_amount', 'vendor_payout', 'item_status',
+          'pickup_code', 'created_at', 'updated_at'
+        ])
+        && data.id == itemId
+        && data.order_id is string
+        && exists(/databases/$(database)/documents/orders/$(data.order_id))
+        && data.vendor_id is string
+        && exists(publicVendorPath)
+        && get(publicVendorPath).data.status == 'active'
+        && exists(productPath)
+        && get(productPath).data.vendor_id == data.vendor_id
+        && data.quantity is number
+        && data.quantity > 0
+        && data.quantity <= 50
+        && data.unit_price is number
+        && data.unit_price >= 0
+        && data.commission_amount is number
+        && data.commission_amount >= 0
+        && data.vendor_payout is number
+        && data.vendor_payout >= 0
+        && data.commission_amount + data.vendor_payout >= data.unit_price * data.quantity - 0.02
+        && data.commission_amount + data.vendor_payout <= data.unit_price * data.quantity + 0.02
+        && data.item_status == 'awaiting_vendor'
+        && data.pickup_code is string
+        && data.created_at is string
+        && data.updated_at is string;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    match /profiles/{userId} {
+      allow read: if isSuperAdmin() || (signedIn() && request.auth.uid == userId);
+      allow create: if signedIn()
+        && request.auth.uid == userId
+        && request.resource.data.id == userId
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.role == 'vendor'
+        && request.resource.data.keys().hasOnly([
+          'id', 'email', 'role', 'full_name', 'phone', 'created_at', 'updated_at'
+        ]);
+      allow update: if isSuperAdmin()
+        || (signedIn()
+          && request.auth.uid == userId
+          && resource.data.role == 'vendor'
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['full_name', 'phone', 'updated_at']));
+      allow delete: if isSuperAdmin()
+        || (signedIn() && request.auth.uid == userId && resource.data.role == 'vendor');
+    }
+
+    match /vendors/{vendorId} {
+      allow get, list: if isSuperAdmin()
+        || (signedIn() && resource.data.profile_id == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.profile_id == request.auth.uid
+        && exists(/databases/$(database)/documents/profiles/$(request.auth.uid))
+        && get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'vendor'
+        && request.resource.data.status == 'pending'
+        && request.resource.data.is_active == false;
+      allow update: if isSuperAdmin()
+        || (ownsStore(vendorId)
+          && request.resource.data.profile_id == resource.data.profile_id
+          && request.resource.data.status == resource.data.status
+          && request.resource.data.commission_rate == resource.data.commission_rate
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+            'store_name', 'slug', 'phone', 'city', 'pickup_address',
+            'instagram_handle', 'tiktok_handle', 'whatsapp_number', 'logo_url', 'updated_at'
+          ]));
+      allow delete: if isSuperAdmin() || ownsStore(vendorId);
+    }
+
+    match /public_vendors/{vendorId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create: if isSuperAdmin() || ownsStore(request.resource.data.vendor_id);
+      allow update: if isSuperAdmin()
+        || (ownsStore(resource.data.vendor_id)
+          && request.resource.data.vendor_id == resource.data.vendor_id);
+      allow delete: if isSuperAdmin() || ownsStore(resource.data.vendor_id);
+    }
+
+    match /orders/{orderId} {
+      allow create: if validGuestOrder(orderId);
+      allow read, update, delete: if isSuperAdmin();
+    }
+
+    match /order_items/{itemId} {
+      allow create: if validGuestOrderItem(itemId);
+      allow read: if isSuperAdmin() || ownsStore(resource.data.vendor_id);
+      allow update: if isSuperAdmin()
+        || (ownsStore(resource.data.vendor_id)
+          && request.resource.data.vendor_id == resource.data.vendor_id
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['item_status', 'updated_at'])
+          && request.resource.data.item_status in ['awaiting_vendor', 'confirmed', 'picked_up', 'at_hub', 'out_of_stock']);
+      allow delete: if isSuperAdmin();
+    }
+
+    match /vendor_stores/{linkId} {
+      allow read: if isSuperAdmin() || (signedIn() && resource.data.vendor_id == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.vendor_id == request.auth.uid
+        && request.resource.data.store_id is string
+        && exists(/databases/$(database)/documents/vendors/$(request.resource.data.store_id))
+        && get(/databases/$(database)/documents/vendors/$(request.resource.data.store_id)).data.profile_id == request.auth.uid
+        && request.resource.data.role == 'owner';
+      allow update: if isSuperAdmin();
+      allow delete: if isSuperAdmin() || (signedIn() && resource.data.vendor_id == request.auth.uid);
+    }
+
+    match /settings/{settingKey} {
+      allow read: if settingKey != 'platform_metrics' || isSuperAdmin();
+      allow write: if isSuperAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isSuperAdmin();
+    }
+  }
+}

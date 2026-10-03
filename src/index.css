@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --rb-ink: #20302d;
+  --rb-forest: #176b5b;
+  --rb-forest-dark: #124f45;
+  --rb-coral: #dc7258;
+  --rb-gold: #edbd69;
+  --rb-mist: #edf5f1;
+  --rb-mist-border: #cfe1d8;
+}
+
+.rb-brand-gradient {
+  background-image: linear-gradient(110deg, var(--rb-forest-dark), var(--rb-forest) 58%, var(--rb-coral));
+}
+
+.rb-brand-button {
+  background-color: var(--rb-forest);
+  color: white;
+}
+
+.rb-brand-button:hover {
+  background-color: var(--rb-forest-dark);
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  [dir="rtl"], [dir="rtl"] body {
+    font-family: 'Cairo', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+  
+  h1, h2, h3, .font-serif {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] .font-serif {
+    font-family: 'Cairo', Georgia, serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+

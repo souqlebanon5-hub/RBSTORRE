@@ -1,0 +1,151 @@
+{
+  "entities": {
+    "Profile": {
+      "title": "Profile",
+      "description": "User profile with role-based access control",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["super_admin", "vendor", "customer"] },
+        "full_name": { "type": "string" },
+        "phone": { "type": "string" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    },
+    "Vendor": {
+      "title": "Vendor",
+      "description": "Merchant boutique store registration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "profile_id": { "type": "string" },
+        "store_name": { "type": "string" },
+        "slug": { "type": "string" },
+        "phone": { "type": "string" },
+        "city": { "type": "string" },
+        "pickup_address": { "type": "string" },
+        "commission_rate": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "pending", "suspended"] },
+        "instagram_handle": { "type": "string" },
+        "tiktok_handle": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "store_name", "phone", "city", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Store item listed by vendor",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vendor_id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "category": { "type": "string" },
+        "images": { "type": "array" },
+        "image_url": { "type": "string" },
+        "in_stock": { "type": "boolean" },
+        "stock_quantity": { "type": "number" },
+        "variants": { "type": "array" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "vendor_id", "title", "price", "category"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Consolidated customer order across multi-vendor bag",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customer_name": { "type": "string" },
+        "customer_phone": { "type": "string" },
+        "delivery_city": { "type": "string" },
+        "delivery_address": { "type": "string" },
+        "payment_method": { "type": "string" },
+        "total_usd": { "type": "number" },
+        "delivery_usd": { "type": "number" },
+        "status": { "type": "string" },
+        "verification_code": { "type": "string" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "customer_name", "customer_phone", "total_usd", "status"]
+    },
+    "OrderItem": {
+      "title": "OrderItem",
+      "description": "Individual vendor item within a consolidated order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "order_id": { "type": "string" },
+        "vendor_id": { "type": "string" },
+        "product_id": { "type": "string" },
+        "title": { "type": "string" },
+        "price": { "type": "number" },
+        "quantity": { "type": "number" },
+        "custom_attributes": { "type": "object" },
+        "status": { "type": "string" },
+        "pickup_code": { "type": "string" }
+      },
+      "required": ["id", "order_id", "vendor_id", "product_id", "price", "quantity"]
+    },
+    "VendorStore": {
+      "title": "VendorStore",
+      "description": "Store ownership association",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "vendor_id": { "type": "string" },
+        "store_id": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["vendor_id", "store_id", "role"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "Application key-value configuration setting",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "value": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["key", "value"]
+    }
+  },
+  "firestore": {
+    "/profiles/{profileId}": {
+      "schema": { "$ref": "#/entities/Profile" },
+      "description": "User profiles and RBAC role records"
+    },
+    "/vendors/{vendorId}": {
+      "schema": { "$ref": "#/entities/Vendor" },
+      "description": "Registered local Lebanese store profiles"
+    },
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Product catalog items with attributes and images"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Consolidated checkout orders"
+    },
+    "/order_items/{itemId}": {
+      "schema": { "$ref": "#/entities/OrderItem" },
+      "description": "Line items for logistics and vendor fulfillment queues"
+    },
+    "/vendor_stores/{linkId}": {
+      "schema": { "$ref": "#/entities/VendorStore" },
+      "description": "Access mappings between user accounts and stores"
+    },
+    "/settings/{settingKey}": {
+      "schema": { "$ref": "#/entities/Setting" },
+      "description": "Marketplace global parameters such as delivery pricing"
+    }
+  }
+}
